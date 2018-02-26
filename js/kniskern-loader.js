@@ -10,6 +10,8 @@ var app = app || {};
 
 window.onload = function(){
     console.log("window.onload called");
+    app.sound.init();
+    app.main.sound = app.sound;
     app.main.init();
 }
 

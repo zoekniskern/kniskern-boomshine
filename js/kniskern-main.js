@@ -55,10 +55,7 @@ app.main = {
     // original 8 fluorescent crayons: https://en.wikipedia.org/wiki/List_of_Crayola_crayon_colors#Fluorescent_crayons
     //  "Ultra Red", "Ultra Orange", "Ultra Yellow","Chartreuse","Ultra Green","Ultra Blue","Ultra Pink","Hot Magenta"
     colors: ["#FD5B78","#FF6037","#FF9966","#FFFF66","#66FF66","#50BFE6","#FF6EFF","#EE34D2"],
-    bgAudio: undefined,
-    currentEffect: 0,
-    currentDirection: 1,
-    effectSounds: ["1.mp3","2.mp3","3.mp3","4.mp3","5.mp3","6.mp3","7.mp3","8.mp3"],
+    sound: undefined, //required - loaded by main.js
     
     //methods
     init : function() {
@@ -78,8 +75,6 @@ app.main = {
         this.gameState = this.game_state.begin;
         
         this.canvas.onmousedown = this.doMousedown.bind(this);
-        this.bgAudio = document.querySelector("#bgAudio");
-        this.bgAudio.volume = 0.25;
         
         this.reset();
 
@@ -133,6 +128,16 @@ app.main = {
             this.fillText(this.ctx,"dt: " + dt.toFixed(3),
             this.width - 150, this.height - 10, "18pt courier", "white");
         }
+        
+        //6 check for cheats
+        //on start screen or round over screen
+        if(this.gameState == this.game_state.begin || this.gameState == this.game_state.round_over){
+            //if shift and up arrows are down
+            if(myKeys.keydown[myKeys.KEYBOARD.KEY_UP] && myKeys.keydown[myKeys.KEYBOARD.KEY_SHIFT]){
+                this.totalScore ++;
+                this.playEffect();
+            }
+        }
     },
     
     pauseGame: function(){
@@ -147,8 +152,9 @@ app.main = {
     },
     
     stopBGAudio: function(){
-        this.bgAudio.pause();
-        this.bgAudio.currentTime = 0;
+        //this.bgAudio.pause(); //OLD
+        //this.bgAudio.currentTime = 0; //OLD
+        this.sound.stopBGAudio()
     },
     
     resumeGame: function() {
@@ -156,7 +162,7 @@ app.main = {
         cancelAnimationFrame(this.animationID);
         
         this.paused = false;
-        this.bgAudio.play();
+        this.sound.playBGAudio();
         
         //restart loop
         this.update();
@@ -189,18 +195,6 @@ app.main = {
 		ctx.restore(); // NEW
 	},
     
-    playEffect: function (){
-        var effectSound = document.createElement('audio');
-        effectSound.volume = 0.3;
-        effectSound.src = "media/" + this.effectSounds[this.currentEffect];
-        effectSound.play();
-        this.currentEffect += this.currentDirection;
-        if(this.currentEffect == this.effectSounds.length || this.currentEffect == -1){
-            this.currentDirection *= -1;
-            this.currentEffect += this.currentDirection;
-        }
-    },
-    
     checkForCollisions: function(){
 		if(this.gameState == this.game_state.exploding){
 			// check for collisions between circles
@@ -219,7 +213,7 @@ app.main = {
 				
 					// Now you finally can check for a collision
 					if(circlesIntersect(c1,c2) ){
-                        this.playEffect();
+                        this.sound.playEffect();
 						c2.state = this.circle_state.exploding;
 						c2.xSpeed = c2.ySpeed = 0;
 						this.roundScore ++;
@@ -251,7 +245,7 @@ app.main = {
         for(var i= this.circles.length-1;i>=0;i--){
             var c = this.circles[i];
             if(pointInsideCircle(mouse.x, mouse.y, c)){
-                this.playEffect();
+                this.sound.playEffect();
                 c.xSpeed = c.ySpeed = 0;
                 c.state = this.circle_state.exploding;
                 this.gameState = this.game_state.exploding;
@@ -263,7 +257,7 @@ app.main = {
     },
     
     doMousedown: function(e) {
-        this.bgAudio.play();        
+        this.sound.playBGAudio();        
         //unpause on a click
         //don't get stuck
         if(this.paused) {
