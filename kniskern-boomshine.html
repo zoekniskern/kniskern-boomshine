@@ -3,7 +3,29 @@
 <head>
     <meta charset="utf-8"/>
     <style>
-        canvas{border:1px solid gray;}
+        canvas{
+            border:1px solid gray;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            z-index: 0;
+        }
+        #button1{
+            display: none;
+            font-size: 24pt;
+            border-radius: 15px;
+            position: absolute;
+            top: 150px;
+            left: 270px;
+            z-index: 1;
+        }
+        #button1:hover{
+            background-color: #fff;
+        }
+        button:focus{
+            outline: 0; /*hide blue border*/
+        }
+        
         #audioControls{display: none;}
     </style>
     <title>Kniskern Boomshine</title>
@@ -13,7 +35,9 @@
     <canvas>
         Get a canvas compatible browser!    
     </canvas>
+    <button id="button1">Click Me</button>
     <script src ="js/kniskern-sound.js"></script>
+    <script src ="js/kniskern-emitter.js"></script>
     <script src="js/kniskern-utilities.js"></script>
     <script src="js/kniskern-keys.js"></script>
     <script src="js/kniskern-loader.js"></script>

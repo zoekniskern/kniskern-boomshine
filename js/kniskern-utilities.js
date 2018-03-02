@@ -115,6 +115,18 @@ function circlesIntersect(c1,c2) {
     return distance < c1.radius + c2.radius;
 }
 
+//button stuff
+function rectangleContainsPoint(rect, point){
+    //example
+    //rect = {x:0,y:0,width:10,height:10}
+    //point = {x:5,y:5}
+    //would return true
+    if(rect.width <= 0 || rect.height <= 0) {
+        return false;
+    }
+    return (point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height);
+};
+
 
 
 
